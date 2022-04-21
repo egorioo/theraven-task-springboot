@@ -35,23 +35,33 @@ public class CustomerService implements ICustomerService {
 
     @Override
     @Transactional(readOnly = true)
-    public CustomerDto getCustomer(Long id) {
-        Optional<Customer> customerOptional =  customerRepository.findById(id);
-        if (customerOptional.isPresent()) {
-            return customerConverter.customerToPojo(customerOptional.get());
+    public List<CustomerDto> getAllCustomers() {
+        /*it was not specified whether to return clients that were deleted, where isActive = false. so there are two options*/
+
+        //all customers, even deleted ones
+        //List<Customer> listOfCustomers = customerRepository.findAll();
+
+        //only active customers
+        List<Customer> listOfCustomers = customerRepository.findAllByActive();
+        if (!listOfCustomers.isEmpty()) {
+            return listOfCustomers.stream().map(customerConverter::customerToPojo).collect(Collectors.toList());
         } else {
-            throw new NoSuchElementException("Customer with this ID does not exist");
+            throw new EmptyResultDataAccessException("no customer found",1);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<CustomerDto> getAllCustomers() {
-        List<Customer> listOfCustomers = customerRepository.findAll();
-        if (!listOfCustomers.isEmpty()) {
-            return listOfCustomers.stream().map(customerConverter::customerToPojo).collect(Collectors.toList());
+    public CustomerDto getCustomer(Long id) {
+        //choice among all customers
+        //Optional<Customer> customerOptional =  customerRepository.findById(id);
+
+        //choice only among active clients
+        Optional<Customer> customerOptional =  customerRepository.getCustomerByIdAndActive(id);
+        if (customerOptional.isPresent()) {
+            return customerConverter.customerToPojo(customerOptional.get());
         } else {
-            throw new EmptyResultDataAccessException("no customer found",1);
+            throw new NoSuchElementException("Customer with this ID does not exist");
         }
     }
 
@@ -61,6 +71,8 @@ public class CustomerService implements ICustomerService {
         Optional<Customer> customerToUpdateOptional = customerRepository.findById(id);
         if (customerToUpdateOptional.isPresent()) {
             Customer target = customerToUpdateOptional.get();
+            /*In the requirements, in the body of the request, there is an ID that needs to be changed,
+            but I'm not sure that changing the primary key is a good practice*/
             //target.setId(customer.getId());
             target.setFullName(customer.getFullName());
             target.setPhone(customer.getPhone());

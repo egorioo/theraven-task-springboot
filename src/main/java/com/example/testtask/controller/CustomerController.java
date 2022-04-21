@@ -3,7 +3,6 @@ package com.example.testtask.controller;
 import com.example.testtask.entity.Customer;
 import com.example.testtask.entity.dto.CustomerDto;
 import com.example.testtask.service.interfaces.ICustomerService;
-import com.example.testtask.utils.CustomerConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -23,13 +22,10 @@ import java.util.NoSuchElementException;
 public class CustomerController {
 
     private final ICustomerService customerService;
-    private final CustomerConverter customerConverter;
 
     @Autowired
-    public CustomerController(ICustomerService customerService,
-                              CustomerConverter customerConverter) {
+    public CustomerController(ICustomerService customerService) {
         this.customerService = customerService;
-        this.customerConverter = customerConverter;
     }
 
     @PostMapping

@@ -25,7 +25,7 @@ public class Customer {
 
     @Column(unique = true)
     @Email(message = "email must match the format (2..100 chars, unique, should include exactly one @)")
-    @Size(min = 2, max = 100)
+    @Size(min = 2, max = 100, message = "email must be between 2 and 100 characters")
     @NotNull(message = "email can't be null")
     private String email;
 
