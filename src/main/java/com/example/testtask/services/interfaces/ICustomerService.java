@@ -1,7 +1,7 @@
-package com.example.testtask.service.interfaces;
+package com.example.testtask.services.interfaces;
 
-import com.example.testtask.entity.Customer;
-import com.example.testtask.entity.dto.CustomerDto;
+import com.example.testtask.entities.Customer;
+import com.example.testtask.entities.dto.CustomerDto;
 
 import java.util.List;
 

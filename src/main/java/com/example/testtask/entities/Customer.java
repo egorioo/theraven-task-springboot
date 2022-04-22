@@ -1,4 +1,4 @@
-package com.example.testtask.entity;
+package com.example.testtask.entities;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;

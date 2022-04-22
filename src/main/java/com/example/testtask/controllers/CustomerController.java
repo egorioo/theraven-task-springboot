@@ -1,8 +1,8 @@
-package com.example.testtask.controller;
+package com.example.testtask.controllers;
 
-import com.example.testtask.entity.Customer;
-import com.example.testtask.entity.dto.CustomerDto;
-import com.example.testtask.service.interfaces.ICustomerService;
+import com.example.testtask.entities.Customer;
+import com.example.testtask.entities.dto.CustomerDto;
+import com.example.testtask.services.interfaces.ICustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;

@@ -1,4 +1,4 @@
-package com.example.testtask.entity.dto;
+package com.example.testtask.entities.dto;
 
 public class CustomerDto {
     private Long id;

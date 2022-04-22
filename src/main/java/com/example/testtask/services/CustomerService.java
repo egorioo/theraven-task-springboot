@@ -1,9 +1,9 @@
-package com.example.testtask.service;
+package com.example.testtask.services;
 
-import com.example.testtask.entity.Customer;
-import com.example.testtask.entity.dto.CustomerDto;
-import com.example.testtask.repository.ICustomerRepository;
-import com.example.testtask.service.interfaces.ICustomerService;
+import com.example.testtask.entities.Customer;
+import com.example.testtask.entities.dto.CustomerDto;
+import com.example.testtask.repositories.ICustomerRepository;
+import com.example.testtask.services.interfaces.ICustomerService;
 import com.example.testtask.utils.CustomerConverter;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;

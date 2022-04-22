@@ -1,6 +1,6 @@
-package com.example.testtask.repository;
+package com.example.testtask.repositories;
 
-import com.example.testtask.entity.Customer;
+import com.example.testtask.entities.Customer;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
