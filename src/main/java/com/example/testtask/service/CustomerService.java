@@ -9,6 +9,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -29,6 +31,7 @@ public class CustomerService implements ICustomerService {
     @Override
     @Transactional
     public CustomerDto createCustomer(Customer customer) {
+        customer.setCreated(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
         customerRepository.save(customer);
         return customerConverter.customerToPojo(customer);
     }
@@ -46,7 +49,7 @@ public class CustomerService implements ICustomerService {
         if (!listOfCustomers.isEmpty()) {
             return listOfCustomers.stream().map(customerConverter::customerToPojo).collect(Collectors.toList());
         } else {
-            throw new EmptyResultDataAccessException("no customer found",1);
+            throw new EmptyResultDataAccessException("no customer found", 1);
         }
     }
 
@@ -57,7 +60,7 @@ public class CustomerService implements ICustomerService {
         //Optional<Customer> customerOptional =  customerRepository.findById(id);
 
         //choice only among active clients
-        Optional<Customer> customerOptional =  customerRepository.getCustomerByIdAndActive(id);
+        Optional<Customer> customerOptional = customerRepository.getCustomerByIdAndActive(id);
         if (customerOptional.isPresent()) {
             return customerConverter.customerToPojo(customerOptional.get());
         } else {
@@ -76,6 +79,7 @@ public class CustomerService implements ICustomerService {
             //target.setId(customer.getId());
             target.setFullName(customer.getFullName());
             target.setPhone(customer.getPhone());
+            target.setUpdated(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
             customerRepository.save(target);
             return customerConverter.customerToPojo(target);
         } else {

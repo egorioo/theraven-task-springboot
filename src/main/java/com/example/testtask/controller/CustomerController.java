@@ -81,10 +81,10 @@ public class CustomerController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<Object> notValidDataException (MethodArgumentNotValidException exception) {
+    public ResponseEntity<Object> notValidDataException(MethodArgumentNotValidException exception) {
 
         List<String> details = new ArrayList<>();
-        for(ObjectError error : exception.getBindingResult().getAllErrors()) {
+        for (ObjectError error : exception.getBindingResult().getAllErrors()) {
             details.add(error.getDefaultMessage());
         }
         return ResponseEntity

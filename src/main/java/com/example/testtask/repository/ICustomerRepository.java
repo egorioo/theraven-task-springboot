@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ICustomerRepository extends CrudRepository<Customer,Long> {
+public interface ICustomerRepository extends CrudRepository<Customer, Long> {
     List<Customer> findAll();
 
     @Query("from Customer c where c.id = ?1 and c.isActive = true ")
