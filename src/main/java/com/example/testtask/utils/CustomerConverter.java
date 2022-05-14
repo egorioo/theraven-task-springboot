@@ -1,13 +1,13 @@
 package com.example.testtask.utils;
 
 import com.example.testtask.entities.Customer;
-import com.example.testtask.entities.dto.CustomerDto;
+import com.example.testtask.entities.dto.response.CustomerResponseDto;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CustomerConverter {
-    public CustomerDto customerToPojo(Customer customer) {
-        CustomerDto customerDto = new CustomerDto();
+    public CustomerResponseDto customerToPojo(Customer customer) {
+        CustomerResponseDto customerDto = new CustomerResponseDto();
         customerDto.setId(customer.getId());
         customerDto.setEmail(customer.getEmail());
         customerDto.setFullName(customer.getFullName());

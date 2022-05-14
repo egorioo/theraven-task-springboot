@@ -1,10 +1,12 @@
 package com.example.testtask.services;
 
 import com.example.testtask.entities.Customer;
-import com.example.testtask.entities.dto.CustomerDto;
-import com.example.testtask.repositories.ICustomerRepository;
-import com.example.testtask.services.interfaces.ICustomerService;
+import com.example.testtask.entities.dto.request.CustomerRequestDto;
+import com.example.testtask.entities.dto.response.CustomerResponseDto;
+import com.example.testtask.entities.dto.request.CustomerPatchRequestDto;
+import com.example.testtask.repositories.CustomerRepository;
 import com.example.testtask.utils.CustomerConverter;
+import com.example.testtask.utils.Response;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,28 +19,32 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class CustomerService implements ICustomerService {
+public class CustomerServiceImpl implements com.example.testtask.services.interfaces.CustomerService {
 
-    private final ICustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
     private final CustomerConverter customerConverter;
 
-    public CustomerService(ICustomerRepository customerRepository,
-                           CustomerConverter customerConverter) {
+    public CustomerServiceImpl(CustomerRepository customerRepository,
+                               CustomerConverter customerConverter) {
         this.customerRepository = customerRepository;
         this.customerConverter = customerConverter;
     }
 
     @Override
     @Transactional
-    public CustomerDto createCustomer(Customer customer) {
-        customer.setCreated(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
-        customerRepository.save(customer);
-        return customerConverter.customerToPojo(customer);
+    public CustomerResponseDto createCustomer(CustomerRequestDto customer) {
+        Customer result = new Customer();
+        result.setEmail(customer.getEmail());
+        result.setPhone(customer.getPhone());
+        result.setFullName(customer.getFullName());
+        result.setCreated(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+        customerRepository.save(result);
+        return customerConverter.customerToPojo(result);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<CustomerDto> getAllCustomers() {
+    public List<CustomerResponseDto> getAllCustomers() {
         /*it was not specified whether to return clients that were deleted, where isActive = false. so there are two options*/
 
         //all customers, even deleted ones
@@ -55,7 +61,7 @@ public class CustomerService implements ICustomerService {
 
     @Override
     @Transactional(readOnly = true)
-    public CustomerDto getCustomer(Long id) {
+    public CustomerResponseDto getCustomer(Long id) {
         //choice among all customers
         //Optional<Customer> customerOptional =  customerRepository.findById(id);
 
@@ -70,7 +76,7 @@ public class CustomerService implements ICustomerService {
 
     @Override
     @Transactional
-    public CustomerDto updateCustomer(Customer customer, Long id) {
+    public CustomerResponseDto updateCustomer(CustomerRequestDto customer, Long id) {
         Optional<Customer> customerToUpdateOptional = customerRepository.findById(id);
         if (customerToUpdateOptional.isPresent()) {
             Customer target = customerToUpdateOptional.get();
@@ -80,7 +86,6 @@ public class CustomerService implements ICustomerService {
             target.setFullName(customer.getFullName());
             target.setPhone(customer.getPhone());
             target.setUpdated(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
-            customerRepository.save(target);
             return customerConverter.customerToPojo(target);
         } else {
             throw new NoSuchElementException("Customer with this ID does not exist");
@@ -89,13 +94,31 @@ public class CustomerService implements ICustomerService {
 
     @Override
     @Transactional
-    public String deleteCustomer(Long id) {
+    public Response deleteCustomer(Long id) {
         Optional<Customer> customerToDeleteOptional = customerRepository.findById(id);
         if (customerToDeleteOptional.isPresent()) {
             Customer target = customerToDeleteOptional.get();
             target.setActive(false);
-            customerRepository.save(target);
-            return "Customer with ID: " + id + " successfully deleted";
+            target.setUpdated(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+            return new Response("Customer with ID: " + id + " successfully deleted");
+        } else {
+            throw new NoSuchElementException("Customer with this ID does not exist");
+        }
+    }
+
+    @Transactional
+    public CustomerResponseDto patchUpdateCustomer(CustomerPatchRequestDto customer, Long id) {
+        Optional<Customer> customerToUpdateOptional = customerRepository.findById(id);
+
+        if (customerToUpdateOptional.isPresent()) {
+            Customer target = customerToUpdateOptional.get();
+            if (customer.getFullName() != null) {
+                target.setFullName(customer.getFullName());
+            }
+            if (customer.getPhone() != null) {
+                target.setPhone(customer.getPhone());
+            }
+            return customerConverter.customerToPojo(target);
         } else {
             throw new NoSuchElementException("Customer with this ID does not exist");
         }

@@ -1,6 +1,6 @@
-package com.example.testtask.entities.dto;
+package com.example.testtask.entities.dto.response;
 
-public class CustomerDto {
+public class CustomerResponseDto {
     private Long id;
     private String fullName;
     private String email;

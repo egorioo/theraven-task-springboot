@@ -1,8 +1,10 @@
 package com.example.testtask.controllers;
 
-import com.example.testtask.entities.Customer;
-import com.example.testtask.entities.dto.CustomerDto;
-import com.example.testtask.services.interfaces.ICustomerService;
+import com.example.testtask.entities.dto.request.CustomerRequestDto;
+import com.example.testtask.entities.dto.response.CustomerResponseDto;
+import com.example.testtask.entities.dto.request.CustomerPatchRequestDto;
+import com.example.testtask.services.interfaces.CustomerService;
+import com.example.testtask.utils.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -21,74 +23,45 @@ import java.util.NoSuchElementException;
 @RequestMapping("/api/customers")
 public class CustomerController {
 
-    private final ICustomerService customerService;
+    private final CustomerService customerService;
 
     @Autowired
-    public CustomerController(ICustomerService customerService) {
+    public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
 
     @PostMapping
-    public ResponseEntity<CustomerDto> createCustomer(@Validated @RequestBody Customer customer) {
-        CustomerDto result = customerService.createCustomer(customer);
+    public ResponseEntity<CustomerResponseDto> createCustomer(@Validated @RequestBody CustomerRequestDto customer) {
+        CustomerResponseDto result = customerService.createCustomer(customer);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<CustomerDto>> getAllCustomers() {
-        List<CustomerDto> list = customerService.getAllCustomers();
+    public ResponseEntity<List<CustomerResponseDto>> getAllCustomers() {
+        List<CustomerResponseDto> list = customerService.getAllCustomers();
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerDto> getCustomer(@PathVariable Long id) {
-        CustomerDto result = customerService.getCustomer(id);
+    public ResponseEntity<CustomerResponseDto> getCustomer(@PathVariable Long id) {
+        CustomerResponseDto result = customerService.getCustomer(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerDto> updateCustomer(@Validated @RequestBody Customer customer, @PathVariable Long id) {
-        CustomerDto result = customerService.updateCustomer(customer, id);
+    public ResponseEntity<CustomerResponseDto> updateCustomer(@Validated @RequestBody CustomerRequestDto customer, @PathVariable Long id) {
+        CustomerResponseDto result = customerService.updateCustomer(customer, id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<CustomerResponseDto> patchUpdateCustomer(@Validated @RequestBody CustomerPatchRequestDto customer, @PathVariable Long id) {
+        CustomerResponseDto customerDto=  customerService.patchUpdateCustomer(customer,id);
+        return new ResponseEntity<>(customerDto, HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCustomer(@PathVariable Long id) {
+    public ResponseEntity<Response> deleteCustomer(@PathVariable Long id) {
         return new ResponseEntity<>(customerService.deleteCustomer(id), HttpStatus.OK);
-    }
-
-    //Exceptions
-
-    @ExceptionHandler
-    public ResponseEntity<String> emailConflictException(DataIntegrityViolationException exception) {
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(exception.getClass().getSimpleName() + ": Client with such email already exists");
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<String> clientNotExistException(NoSuchElementException exception) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(exception.getClass().getSimpleName() + ": No such customer exists");
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<String> emptyResultException(EmptyResultDataAccessException exception) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(exception.getClass().getSimpleName() + ": No one customer found");
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<Object> notValidDataException(MethodArgumentNotValidException exception) {
-
-        List<String> details = new ArrayList<>();
-        for (ObjectError error : exception.getBindingResult().getAllErrors()) {
-            details.add(error.getDefaultMessage());
-        }
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(exception.getClass().getSimpleName() + ": Not valid\n" + details);
     }
 }
