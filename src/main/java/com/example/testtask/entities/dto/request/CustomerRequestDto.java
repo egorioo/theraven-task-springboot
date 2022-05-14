@@ -46,4 +46,13 @@ public class CustomerRequestDto {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
+    @Override
+    public String toString() {
+        return "CustomerRequestDto{" +
+                "fullName='" + fullName + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                '}';
+    }
 }
