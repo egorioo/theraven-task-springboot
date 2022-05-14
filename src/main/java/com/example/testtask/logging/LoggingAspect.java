@@ -1,4 +1,4 @@
-package com.example.testtask.loging;
+package com.example.testtask.logging;
 
 import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
